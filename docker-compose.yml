@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  srv:
+    build:
+      context: ./srv
+    command: yarn start
+    environment:
+      - PORT=3001
+    ports:
+      - "4001:3001"
+
+
+  # wrk:
+    # build:
+      # context: ./wrk
+    # command: yarn start
+    # depends_on:
+      # - db
+      # - redis
+
+  db:
+    image: mongo
+
+  # redis:
+    # image: redis
+
+  rabbitmq:
+    image: rabbitmq
+
+  crn:
+    build:
+      context: ./crn
+    command: yarn start
+    environment:
+      - PORT=3000
+    ports:
+      - "4000:3000"
+    depends_on:
+      - rabbitmq
+
+  worker_fetch:
+    build:
+      context: ./worker_fetch
+    command: yarn start
+    depends_on:
+      - rabbitmq      
+
+  pg:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+  webapp:
+    build: 
+      context: ./webapp
+    command: sh -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    environment:
+      - "SESSION_KEY=ZWE5MjgxYzVmOWYxOTEwOTc5ODU0MTk0MDEyMTc2OTQxN2I4MmFiYiAgLQo="
+      - "TICNSP_PG_HOST=pg"
+      - "TICNSP_PG_USER=postgres"
+    # date +%s | shasum5.18 | base64 | head -c 128 ; echo
+    volumes:
+      - ./webapp:/myapp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - pg

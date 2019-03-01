@@ -1,0 +1,28 @@
+{
+  "name": "ticnsp-eaas-crn",
+  "version": "1.0.0",
+  "description": "Job scheduler for eaas",
+  "main": "index.js",
+  "author": "ricardo.roman@ticnsp.org",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon --exec babel-node src/index.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.18.9"
+  },
+  "dependencies": {
+    "agenda": "^2.0.2",
+    "agendash": "^0.4.0",
+    "amqplib": "^0.5.3",
+    "axios": "^0.18.0",
+    "email-templates": "^5.0.3",
+    "express": "^4.16.4",
+    "moment": "^2.24.0",
+    "nodemailer": "^5.1.1",
+    "pug": "^2.0.3",
+    "winston": "^3.2.0"
+  }
+}

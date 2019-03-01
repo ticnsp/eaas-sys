@@ -1,0 +1,23 @@
+{
+  "name": "ticnsp-eaas-worker_fetch",
+  "version": "1.0.0",
+  "description": "Worker fetcher for eaas",
+  "main": "index.js",
+  "author": "ricardo.roman@ticnsp.org",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon --exec babel-node src/index.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.18.9"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.3",
+    "axios": "^0.18.0",
+    "moment": "^2.24.0",
+    "mongoose": "^5.4.8",
+    "winston": "^3.1.0"
+  }
+}
