@@ -4,26 +4,16 @@ services:
   srv:
     build:
       context: ./srv
-    command: yarn start
+    command: yarn dev
+    volumes:
+      - ./srv:/usr/src/app
     environment:
-      - PORT=3001
+     - PORT=3001
     ports:
-      - "4001:3001"
-
-
-  # wrk:
-    # build:
-      # context: ./wrk
-    # command: yarn start
-    # depends_on:
-      # - db
-      # - redis
+     - "3001:3001"
 
   db:
     image: mongo
-
-  # redis:
-    # image: redis
 
   rabbitmq:
     image: rabbitmq
@@ -31,25 +21,37 @@ services:
   crn:
     build:
       context: ./crn
-    command: yarn start
+    command: yarn dev
+    volumes:
+      - ./crn:/usr/src/app
     environment:
-      - PORT=3000
+      - PORT=3002
     ports:
-      - "4000:3000"
+      - "3002:3002"
     depends_on:
       - rabbitmq
 
   worker_fetch:
     build:
       context: ./worker_fetch
-    command: yarn start
+    command: yarn dev
+    environment:
+      - "READINGS_DB=mongodb://db/ticnsp-eaas-readings"
+      - "JOBS_DB=mongodb://db/ticnsp-eaas-jobs"
+      - "LOG_LEVEL=info"
+      - "JOB_TODO=fetch"
+      - "AMQP_HOST=amqp://rabbitmq"
+      - "AMQP_QUEUE=fetch_queue"
+    volumes:
+      - ./worker_fetch:/usr/src/app
     depends_on:
       - rabbitmq      
 
   pg:
     image: postgres
     volumes:
-      - ./tmp/db:/var/lib/postgresql/data
+      - ./pg/tmp/db:/var/lib/postgresql/data
+
   webapp:
     build: 
       context: ./webapp

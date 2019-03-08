@@ -7,4 +7,6 @@ require("@rails/ujs").start()
 require("turbolinks").start()
 require("@rails/activestorage").start()
 require("channels")
-require("bootstrap")
+// require("bootstrap")
+import 'bootstrap/dist/js/bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';

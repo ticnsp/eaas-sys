@@ -118,6 +118,7 @@ app.get('/health', (req, res) => {
         } catch(error) {
             logger.error(error);
         }
+        done();
     });
 
     agenda.define('send reading email', (job, done) => {
@@ -134,7 +135,6 @@ app.get('/health', (req, res) => {
 
     // Schedule "fetch monthly readings"
     await agenda.every();
-    await agenda.now('fetch monthly readings');
     await agenda.now('fetch monthly readings');
 
     // Schedule "send reading email"

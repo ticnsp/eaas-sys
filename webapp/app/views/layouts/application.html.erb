@@ -7,9 +7,18 @@
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_pack_tag 'bootstrap' %>
   </head>
 
   <body>
-    <%= yield %>
+    <div class="container">
+      <% if current_user %>
+        <h3>Evangelio del día</h3>
+        <%= render 'layouts/partials/navbar' %>
+        <%= yield %>
+      <% else %>
+        <%= yield %>
+      <% end %>
+    </div>
   </body>
 </html>
