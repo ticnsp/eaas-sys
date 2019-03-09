@@ -1,4 +1,5 @@
-FROM kkarczmarczyk/node-yarn:7.6
+# FROM kkarczmarczyk/node-yarn:7.6
+FROM node:11.8.0
 MAINTAINER Ricardo Roman <rrmn92@gmail.com>
 
 WORKDIR /usr/src/app

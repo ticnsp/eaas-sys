@@ -17,10 +17,15 @@ export const delay = function(n) {
 };
 
 export const updateJobLog = function(jobDoc, status, step, message) {
-    jobDoc.currentStatus = status;
-    jobDoc.currentMessage = message;
-    jobDoc.currentStep = step;
-    jobDoc.updated_at = Date.now();
+    let currentDate = Date.now();
+    jobDoc.logs.push(
+        {
+            step,
+            status,
+            message,
+            currentDate
+        }
+    );
     logger.info(`${jobDoc._id} - ${status} :: ${message}`);
     return jobDoc.save();
 };

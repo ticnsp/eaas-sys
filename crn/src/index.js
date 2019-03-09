@@ -45,26 +45,27 @@ app.get('/health', (req, res) => {
     let fetchchan = undefined;
     let emailchan = undefined;
 
-    try {
-        logger.info("Waiting 10 seconds before connecting to queue...");
-        await delay(10000);
-        logger.info("Done waiting.");
-    } catch (err) {
-        logger.error("Timeout error...");
-        logger.error(err);
-    }
+    let connattempts = 0;
+    let connected = false;
 
-    try {
-        logger.info("Connecting to rabbitmq...");
-        mqconn = await amqplib.connect('amqp://rabbitmq');
-        logger.info("Connected.");
-    } catch (err) {
-        logger.error("Error connecting to rabbitmq...");
-        logger.error(err);
-        logger.info("Exiting (1)");
-        process.exit(1);
-        // log error
-        // exit
+    while (connected === false) {
+        try {
+            logger.info("Connecting to rabbitmq...");
+            mqconn = await amqplib.connect('amqp://rabbitmq');
+            connected = true;
+            logger.info("Connected.");
+        } catch (err) {
+            logger.error("Error connecting to rabbitmq...");
+            logger.error(err);
+            connattempts = connattempts + 1;
+            if (connattempts >= 10) {
+                logger.info("Exiting (1)");
+                process.exit(1);
+            } else {
+                logger.info("Waiting 10 seconds before connecting to queue...");
+                await delay(10000);
+            }
+        }
     }
 
     try {

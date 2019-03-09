@@ -1,7 +1,7 @@
 {
-  "name": "ticnsp-eaas-worker_fetch",
+  "name": "ticnsp-eaas-worker",
   "version": "1.0.0",
-  "description": "Worker fetcher for eaas",
+  "description": "Worker for eaas",
   "main": "index.js",
   "author": "ricardo.roman@ticnsp.org",
   "license": "MIT",

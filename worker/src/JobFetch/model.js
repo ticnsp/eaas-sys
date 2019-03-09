@@ -3,7 +3,7 @@ import { logger } from '../logger';
 import { READINGS_DB } from '../config';
 
 logger.info("Connecting to db...");
-mongoose.connect(READINGS_DB);
+var readingsConn = mongoose.createConnection(READINGS_DB);
 logger.info("Connected to db.");
 
 logger.info("Defining schema...");
@@ -95,9 +95,9 @@ const LiturgyDaySchema = new Schema({
     saints: [SaintSchema]
 });
 
-export const SaintModel = mongoose.model('Saint', SaintSchema);
-export const ReadingModel = mongoose.model('Reading', ReadingSchema);
-export const CommentaryModel = mongoose.model('Commentary', CommentarySchema);
-export const LiturgyModel = mongoose.model('Liturgy', LiturgySchema);
-export const LiturgyDayModel = mongoose.model('LiturgyDay', LiturgyDaySchema);
+export const SaintModel = readingsConn.model('Saint', SaintSchema);
+export const ReadingModel = readingsConn.model('Reading', ReadingSchema);
+export const CommentaryModel = readingsConn.model('Commentary', CommentarySchema);
+export const LiturgyModel = readingsConn.model('Liturgy', LiturgySchema);
+export const LiturgyDayModel = readingsConn.model('LiturgyDay', LiturgyDaySchema);
 logger.info("Done defining schema.");

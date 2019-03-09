@@ -7,8 +7,8 @@ import {
 } from './config';
 import { logger } from './logger';
 import { delay } from './helpers';
-import { doJob as doFetchJob} from './JobFetch/tasks';
-// import { doJob as doEmailJob} from './JobEmail/tasks';
+import { doJob as doFetchJob } from './JobFetch/tasks';
+import { doJob as doEmailJob } from './JobEmail/tasks';
 
 
 /*
@@ -22,9 +22,6 @@ import { doJob as doFetchJob} from './JobFetch/tasks';
     let connected = false;
     let q = AMQP_QUEUE;
 
-    logger.info("Waiting 10 seconds before connecting to queue...");
-    await delay(10000);
-
     while (connected === false) {
         try {
             logger.info("Connecting to rabbitmq...");
@@ -35,7 +32,7 @@ import { doJob as doFetchJob} from './JobFetch/tasks';
             logger.error("Error connecting to rabbitmq...");
             logger.error(err);
             connattempts = connattempts + 1;
-            if (connattempts >= 3) {
+            if (connattempts >= 5) {
                 logger.info("Exiting (1)");
                 process.exit(1);
             } else {
@@ -69,11 +66,17 @@ import { doJob as doFetchJob} from './JobFetch/tasks';
 
     switch(JOB_TODO) {
         case "fetch":
-            toDo = doFetchJob
+            toDo = doFetchJob;
+            break;
+        case "email":
+            toDo = doEmailJob;
+            break;
+        default:
+            toDo = doFetchJob;
     }
 
     // Ready
-    logger.info("Ready to process jobs.");
+    logger.info(`Ready to process ${JOB_TODO} jobs.`);
 
     // Do job on message
     channel.consume(q, async (msg) => {

@@ -12,7 +12,7 @@ import axios from 'axios';
 const checkPreviousRecords = async(date, lang, jobInstance) => {
     let shouldFetch = false;
 
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1000,
@@ -25,7 +25,7 @@ const checkPreviousRecords = async(date, lang, jobInstance) => {
 
     if (existingDoc) {
         // Document exists, check content
-        updateJobLog(
+        await updateJobLog(
             jobInstance,
             jobStatus[1],
             1000,
@@ -35,7 +35,7 @@ const checkPreviousRecords = async(date, lang, jobInstance) => {
         let existingDocReadings = existingDoc.get('readings');
         if (existingDocReadings.length <= 0) {
 
-            updateJobLog(
+            await updateJobLog(
                 jobInstance,
                 jobStatus[1],
                 1000,
@@ -45,7 +45,7 @@ const checkPreviousRecords = async(date, lang, jobInstance) => {
             await LiturgyDayModel.deleteOne({ id: existingDoc.id });
             shouldFetch = true;
 
-            updateJobLog(
+            await updateJobLog(
                 jobInstance,
                 jobStatus[1],
                 1000,
@@ -53,7 +53,7 @@ const checkPreviousRecords = async(date, lang, jobInstance) => {
             );
 
         } else {
-            updateJobLog(
+            await updateJobLog(
                 jobInstance,
                 jobStatus[1],
                 1000,
@@ -65,7 +65,7 @@ const checkPreviousRecords = async(date, lang, jobInstance) => {
         shouldFetch = true;
     }
 
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1000,
@@ -76,7 +76,7 @@ const checkPreviousRecords = async(date, lang, jobInstance) => {
 };
 
 const fetchNewData = async(date, lang, jobInstance) => {
-   updateJobLog(
+   await updateJobLog(
         jobInstance,
         jobStatus[1],
         1100,
@@ -90,7 +90,7 @@ const fetchNewData = async(date, lang, jobInstance) => {
     data = response.data.data;
     data.lang = lang;
 
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1100,
@@ -101,7 +101,7 @@ const fetchNewData = async(date, lang, jobInstance) => {
 };
 
 const saveNewData = async (data, jobInstance) => {
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -109,7 +109,7 @@ const saveNewData = async (data, jobInstance) => {
     );
 
     const savedReadings = await ReadingModel.insertMany(data.readings);
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -128,7 +128,7 @@ const saveNewData = async (data, jobInstance) => {
         );
         savedSaints.push(savedSaint);
     }
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -136,7 +136,7 @@ const saveNewData = async (data, jobInstance) => {
     );
 
     const savedCommentary = await CommentaryModel.create(data.commentary);
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -144,7 +144,7 @@ const saveNewData = async (data, jobInstance) => {
     );
 
     const savedLiturgy = await LiturgyModel.create(data.liturgy);
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -159,7 +159,7 @@ const saveNewData = async (data, jobInstance) => {
     let newLiturgyDay = new LiturgyDayModel(
         data
     );
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -169,7 +169,7 @@ const saveNewData = async (data, jobInstance) => {
     for (var saint of savedSaints) {
         newLiturgyDay.saints.push(saint);
     }
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -179,7 +179,7 @@ const saveNewData = async (data, jobInstance) => {
     for (var reading of savedReadings) {
         newLiturgyDay.readings.push(reading);
     }
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -187,7 +187,7 @@ const saveNewData = async (data, jobInstance) => {
     );
 
     newLiturgyDay.liturgy = savedLiturgy;
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -195,14 +195,14 @@ const saveNewData = async (data, jobInstance) => {
     );
 
     newLiturgyDay.commentary = savedCommentary;
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
         `Attached commentary to day...`
     );
 
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -211,7 +211,7 @@ const saveNewData = async (data, jobInstance) => {
 
     await newLiturgyDay.save();
 
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1200,
@@ -226,19 +226,20 @@ export const doJob = async (jobData) => {
     const date = jobData.date;
 
     let jobInstance = await JobFetchModel.create({
-        date: date,
-        lang: lang
+        jobData: {
+            date: date,
+            lang: lang
+        }
     });
 
-    // Will happen async-ly
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[0], 0,
         `Starting job fetcher for ${date}, ${lang}`
     );
 
     // 1) Check if it exists
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[1],
         1000,
@@ -248,7 +249,7 @@ export const doJob = async (jobData) => {
 
     if (shouldFetch) {
         // 1.1 Fetch
-        updateJobLog(
+        await updateJobLog(
             jobInstance,
             jobStatus[1],
             1100,
@@ -257,7 +258,7 @@ export const doJob = async (jobData) => {
         let data = await fetchNewData(date, lang, jobInstance);
 
         // 1.2 Save to DB
-        updateJobLog(
+        await updateJobLog(
             jobInstance,
             jobStatus[1],
             1200,
@@ -267,16 +268,16 @@ export const doJob = async (jobData) => {
 
     } else {
         // 1.0 Say there was no need to fetch
-        updateJobLog(
+        await updateJobLog(
             jobInstance,
             jobStatus[1],
-            1000
+            1000,
             `Document exists with valid data for ${date}, ${lang}`
         )
     }
 
     // 2) We are done
-    updateJobLog(
+    await updateJobLog(
         jobInstance,
         jobStatus[2],
         2000,

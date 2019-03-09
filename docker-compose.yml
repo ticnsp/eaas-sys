@@ -33,7 +33,7 @@ services:
 
   worker_fetch:
     build:
-      context: ./worker_fetch
+      context: ./worker
     command: yarn dev
     environment:
       - "READINGS_DB=mongodb://db/ticnsp-eaas-readings"
@@ -43,7 +43,7 @@ services:
       - "AMQP_HOST=amqp://rabbitmq"
       - "AMQP_QUEUE=fetch_queue"
     volumes:
-      - ./worker_fetch:/usr/src/app
+      - ./worker:/usr/src/app
     depends_on:
       - rabbitmq      
 
